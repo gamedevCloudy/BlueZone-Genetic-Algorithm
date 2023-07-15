@@ -4,7 +4,7 @@
 
 This project is an AI simulation built in Unity that explores the concept of evolutionary algorithms. In this experiment, a population of primitive shape agents must learn to survive within a shrinking blue zone. The agents evolve over multiple generations, gradually improving their survival strategies.
 
-![Screenshot](https://github.com/gamedevCloudy/BlueZone-Genetic-Algorithm/blob/4c6af3e1f4642caf17766bd9a53870e0a997bb14/SS.png)
+![](https://github.com/gamedevCloudy/BlueZone-Genetic-Algorithm/blob/4c6af3e1f4642caf17766bd9a53870e0a997bb14/SS.png)
 
 ## How It Works
 
