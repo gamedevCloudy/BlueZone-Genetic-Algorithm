@@ -5,18 +5,19 @@ using UnityEngine;
 public class BlueZone : MonoBehaviour
 {
 
-    public float shrinkingRate = 0.5f; // Rate at which the blue zone shrinks per second
-    // public float damagePerSecond = 10f; // Amount of damage inflicted per second
+    public float shrinkingRate = 0.5f;
+    // Rate at which the blue zone shrinks per second
 
-    private float currentSize = 150f; // Current size of the blue zone
-                                      // Start is called before the first frame update
 
-    public GameManager gm;
+    private float currentSize = 150f;
+    // Current size of the blue zone
+
+    public GameManager _gameManager;
 
     // Update is called once per frame
     void Update()
     {
-        if (currentSize > 5f)
+        if (currentSize > 1f)
         {
             currentSize -= shrinkingRate * Time.deltaTime;
             currentSize = Mathf.Max(currentSize, 0f);
@@ -25,7 +26,7 @@ public class BlueZone : MonoBehaviour
             transform.localScale = new Vector3(currentSize, 1f, currentSize);
 
         }
-        else gm.SelectFittestAgents();
+        else _gameManager.SelectFittestAgents();
     }
 
     public void ResetBlueZone()

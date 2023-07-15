@@ -6,18 +6,25 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    public List<AgentBehaviour> agents; // Reference to all the agents in the scene
+    [Header("Runtime")]
+    [SerializeField] private List<AgentBehaviour> agents; // Reference to all the agents in the scene
 
-    public int selectedAgentsCount = 100; // Number of agents to select for the next generation
+    [SerializeField] private int selectedAgentsCount = 100; // Number of agents to select for the next generation
+
+    [Tooltip("Adjust upto 100 - Speed up the simulation")]
+    [Range(1f, 100f)]
+    [SerializeField] private float _timeScale = 1f;
 
     private int currentGeneration = 1;
 
+    [Header("UI")]
     [SerializeField] TMP_Text _genText;
-    [SerializeField] TMP_Text _bestGenome;
+    [SerializeField] TMP_Text _genomeText;
 
-    public GameObject agentPrefab;
+    [Header("Vars")]
+    [SerializeField] private GameObject agentPrefab;
+    [SerializeField] private GameObject land;
 
-    public float scale = 1f;
 
     // private float reproductionDelay = 5f; // Delay in seconds before triggering the next generation
 
@@ -53,7 +60,7 @@ public class GameManager : MonoBehaviour
         currentGeneration++;
         _genText.text = "Gen: " + currentGeneration;
 
-        _bestGenome.text = "Best Genome: " + agents[0].genome[0] + " " + agents[0].genome[1];
+        _genomeText.text = "Best Genome: " + agents[0].genome[0] + " " + agents[0].genome[1];
 
         BlueZone bz = GameObject.FindObjectOfType<BlueZone>();
         bz.ResetBlueZone();
@@ -67,7 +74,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        Time.timeScale = scale;
+        Time.timeScale = _timeScale;
     }
 
     public void ReproduceAndMutate()
@@ -82,7 +89,7 @@ public class GameManager : MonoBehaviour
             // Create a new agent object as the offspring
             GameObject offspring = Instantiate(agentPrefab);
 
-
+            offspring.transform.SetParent(land.transform);
 
 
             offspring.transform.position = new Vector3(Random.Range(-150f, 150f), 2f, Random.Range(-150f, 150f));
@@ -96,15 +103,13 @@ public class GameManager : MonoBehaviour
             // Here, we'll simply clone the genome of one of the parents
             offspringController.genome = parentA.genome.ToArray();
 
-            // Destroy(parentA.gameObject);
-            // Destroy(parentB.gameObject);
 
             // Apply mutation to the offspring's genome to introduce variation
             // You can implement different mutation methods based on your preference
             // For example, you can randomly modify certain genes or add random values to them
             // Here, we'll simply mutate a single gene by adding a small random value
             int geneIndex = Random.Range(0, offspringController.genome.Length);
-            offspringController.genome[geneIndex] += Random.Range(-0.1f, 0.1f);
+            offspringController.genome[geneIndex] += Random.Range(-2f, 2f);
         }
     }
 

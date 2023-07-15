@@ -26,24 +26,14 @@ public class AgentBehaviour : MonoBehaviour
     }
     private void Update()
     {
-        // // Get input for movement
-        // float horizontalInput = genome[0];
-        // float verticalInput = genome[1];
 
-        // Calculate movement direction
-        // Vector3 movement = new Vector3(horizontalInput, 0f, verticalInput).normalized;
-
-        // Move the agent
-        // transform.position += movement * speed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+
         if (_dealDamange) DealDamage();
 
         if (health <= 0)
         {
             gameObject.SetActive(false);
-            // Destroy(gameObject);
-            // gm.SelectFittestAgents();
-
         }
 
         CalculateFitness();
@@ -64,6 +54,7 @@ public class AgentBehaviour : MonoBehaviour
 
     void DealDamage()
     {
+        // take damage
         health -= 65f * Time.deltaTime;
     }
 
