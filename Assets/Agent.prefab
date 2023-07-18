@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8598233956127709275}
   - component: {fileID: 8598233956127709279}
   - component: {fileID: 8598233956127709278}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Agent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -113,7 +113,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   health: 100
-  gm: {fileID: 0}
+  damageRate: 20
   fitness: 0
   genome: []
 --- !u!54 &8598233956127709278

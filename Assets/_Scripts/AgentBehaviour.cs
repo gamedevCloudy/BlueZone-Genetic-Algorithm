@@ -4,7 +4,8 @@ public class AgentBehaviour : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
     [SerializeField] private float health = 100f;
-    [SerializeField] private GameManager gm;
+
+    [SerializeField] private float damageRate;
     public float fitness;
     private bool _dealDamange = true;
 
@@ -12,17 +13,18 @@ public class AgentBehaviour : MonoBehaviour
 
     private Vector3 target;
 
-    void Start()
+    void Awake()
     {
-        gm = GameObject.FindObjectOfType<GameManager>();
+        // gm = GameObject.FindObjectOfType<GameManager>();
 
         genome = new float[2]; // Assuming a single gene in this example
         for (int i = 0; i < genome.Length; i++)
         {
-            genome[i] = Random.Range(-150f, 150f);
+            genome[i] = Random.Range(-50f, 50f);
         }
 
-        Vector3 target = new Vector3(genome[0], 1f, genome[1]);
+        target = new Vector3(genome[0], 1f, genome[1]);
+
     }
     private void Update()
     {
@@ -39,6 +41,10 @@ public class AgentBehaviour : MonoBehaviour
         CalculateFitness();
     }
 
+    // void FixedUpdate()
+    // {
+    //     Debug.Log("Current: " + transform.position + ",\nTarget: " + target);
+    // }
     void OnTriggerExit(Collider col)
     {
         //not safe
@@ -55,16 +61,16 @@ public class AgentBehaviour : MonoBehaviour
     void DealDamage()
     {
         // take damage
-        health -= 65f * Time.deltaTime;
+        health -= damageRate * Time.deltaTime;
     }
 
     private void CalculateFitness()
     {
-        fitness = Mathf.Max(0f, health) + Mathf.Max(0f, Time.timeSinceLevelLoad - 10f) * 10f; // Fitness based on remaining health and survival time
+        fitness = (Mathf.Max(0f, health) + Mathf.Max(0f, Time.timeSinceLevelLoad - 10f) * 10f) / Mathf.Max(1f, (Vector3.Distance(transform.position, target))); // Fitness based on remaining health and survival time
 
         if (!_dealDamange)
         {
-            fitness += 1000f; // Bonus fitness for being inside the blue zone
+            fitness += 100f; // Bonus fitness for being inside the blue zone
         }
     }
 

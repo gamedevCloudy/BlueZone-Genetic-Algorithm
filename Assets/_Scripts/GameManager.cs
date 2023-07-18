@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     [Range(1f, 100f)]
     [SerializeField] private float _timeScale = 1f;
 
+    [SerializeField] private float spawnRange = 40f;
+
     private int currentGeneration = 1;
 
     [Header("UI")]
@@ -24,17 +26,42 @@ public class GameManager : MonoBehaviour
     [Header("Vars")]
     [SerializeField] private GameObject agentPrefab;
     [SerializeField] private GameObject land;
+    [SerializeField] private BlueZone bz;
 
+    // [SerializeField] private GameObject _agent;
+    [Tooltip("Inital number of agents.")]
+    [SerializeField] private int _agentCount;
 
-    // private float reproductionDelay = 5f; // Delay in seconds before triggering the next generation
+    // Start is called before the first frame update
+    void Awake()
+    {
+        //create an initial population
+        for (int i = 0; i < _agentCount; i++)
+        {
+            float spawnPosX = 0;
+            float spawnPosZ = 0;
+            // while (25f > spawnPosX && spawnPosX > -25f)
+            spawnPosX = Random.Range(-spawnRange, spawnRange);
+            // while (25f > spawnPosZ && spawnPosZ > -25f)
+            spawnPosZ = Random.Range(-spawnRange, spawnRange);
+
+            Vector3 spawnPos = new Vector3(spawnPosX, 2.5f, spawnPosZ);
+            GameObject g = Instantiate(agentPrefab, spawnPos, Quaternion.identity);
+            g.transform.SetParent(GameObject.Find("Land").transform);
+
+            AgentBehaviour ag = g.GetComponent<AgentBehaviour>();
+
+            for (int j = 0; j < ag.genome.Length; j++)
+            {
+                ag.genome[j] = Random.Range(-spawnRange, spawnRange);
+            }
+            agents.Add(ag);
+        }
+    }
 
     private void Start()
     {
         Application.targetFrameRate = 30;
-        // Get all the AgentBehaviour components in the scene
-        agents = FindObjectsOfType<AgentBehaviour>().ToList();
-
-        // InvokeRepeating("SelectFittestAgents", 5f, reproductionDelayf);
     }
 
     public void SelectFittestAgents()
@@ -45,8 +72,6 @@ public class GameManager : MonoBehaviour
         // Select the top agents with the highest fitness scores
         for (int i = selectedAgentsCount; i < agents.Count; i++)
         {
-
-            // Destroy(agents[i].gameObject);
             agents[i].gameObject.SetActive(false); // Disable or destroy the least fit agents
             GameObject g = agents[i].gameObject;
             agents.Remove(agents[i]);
@@ -58,20 +83,20 @@ public class GameManager : MonoBehaviour
 
         // Increment the generation number
         currentGeneration++;
-        _genText.text = "Gen: " + currentGeneration;
+        UpadteUI();
 
-        _genomeText.text = "Best Genome: " + agents[0].genome[0] + " " + agents[0].genome[1];
 
-        BlueZone bz = GameObject.FindObjectOfType<BlueZone>();
         bz.ResetBlueZone();
         // Invoke(nameof(TriggerNextGeneration), reproductionDelay);
     }
 
-    private void TriggerNextGeneration()
-    {
-        SelectFittestAgents();
-    }
 
+    void UpadteUI()
+    {
+        _genText.text = "Gen: " + currentGeneration;
+
+        _genomeText.text = "Best Genome: " + agents[0].genome[0] + " " + agents[0].genome[1];
+    }
     private void Update()
     {
         Time.timeScale = _timeScale;
@@ -92,7 +117,7 @@ public class GameManager : MonoBehaviour
             offspring.transform.SetParent(land.transform);
 
 
-            offspring.transform.position = new Vector3(Random.Range(-150f, 150f), 2f, Random.Range(-150f, 150f));
+            offspring.transform.position = new Vector3(Random.Range(-spawnRange, spawnRange), 2f, Random.Range(-spawnRange, spawnRange));
             AgentBehaviour offspringController = offspring.GetComponent<AgentBehaviour>();
 
             agents.Add(offspringController);
@@ -101,7 +126,12 @@ public class GameManager : MonoBehaviour
             // You can implement different crossover methods based on your preference
             // For example, you can randomly select genes from the parents or average their values
             // Here, we'll simply clone the genome of one of the parents
-            offspringController.genome = parentA.genome.ToArray();
+            // offspringController.genome = parentA.genome.ToArray();
+
+
+            offspringController.genome[0] = (parentA.genome[0] + parentB.genome[0]) / 2;
+            offspringController.genome[1] = parentA.genome[1];
+
 
 
             // Apply mutation to the offspring's genome to introduce variation
@@ -110,6 +140,12 @@ public class GameManager : MonoBehaviour
             // Here, we'll simply mutate a single gene by adding a small random value
             int geneIndex = Random.Range(0, offspringController.genome.Length);
             offspringController.genome[geneIndex] += Random.Range(-2f, 2f);
+        }
+
+        for (int i = 0; i < (agents.Count - selectedAgentsCount); i++)
+        {
+            agents[i].gameObject.SetActive(false);
+            agents.Remove(agents[i]);
         }
     }
 

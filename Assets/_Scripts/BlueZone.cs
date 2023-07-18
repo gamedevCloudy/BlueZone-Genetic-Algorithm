@@ -8,8 +8,8 @@ public class BlueZone : MonoBehaviour
     public float shrinkingRate = 0.5f;
     // Rate at which the blue zone shrinks per second
 
-
-    private float currentSize = 150f;
+    [SerializeField] private float startSize = 100f;
+    [SerializeField] private float currentSize = 100f;
     // Current size of the blue zone
 
     public GameManager _gameManager;
@@ -31,6 +31,6 @@ public class BlueZone : MonoBehaviour
 
     public void ResetBlueZone()
     {
-        currentSize = 150f;
+        currentSize = startSize;
     }
 }
